@@ -1,7 +1,4 @@
-# Full Stack FastAPI Template
-
-<a href="https://github.com/fastapi/full-stack-fastapi-template/actions?query=workflow%3ATest" target="_blank"><img src="https://github.com/fastapi/full-stack-fastapi-template/workflows/Test/badge.svg" alt="Test"></a>
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/fastapi/full-stack-fastapi-template" target="_blank"><img src="https://coverage-badge.samuelcolvin.workers.dev/fastapi/full-stack-fastapi-template.svg" alt="Coverage"></a>
+# Data Management App
 
 ## Technology Stack and Features
 
@@ -15,7 +12,7 @@
     - 🤖 An automatically generated frontend client.
     - 🧪 [Playwright](https://playwright.dev) for End-to-End testing.
     - 🦇 Dark mode support.
-- 🐋 [Docker Compose](https://www.docker.com) for development and production.
+- 🐋 [Docker Compose](https://rancherdesktop.io/) for development and production.
 - 🔒 Secure password hashing by default.
 - 🔑 JWT (JSON Web Token) authentication.
 - 📫 Email based password recovery.
