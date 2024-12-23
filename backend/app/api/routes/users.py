@@ -130,9 +130,9 @@ def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Delete own user.
     """
-    if current_user.is_superuser:
+    if current_user.role == 'admin':
         raise HTTPException(
-            status_code=403, detail="Super users are not allowed to delete themselves"
+            status_code=403, detail="Admins are not allowed to delete themselves"
         )
     statement = delete(Item).where(col(Item.owner_id) == current_user.id)
     session.exec(statement)  # type: ignore
@@ -167,7 +167,7 @@ def read_user_by_id(
     user = session.get(User, user_id)
     if user == current_user:
         return user
-    if not current_user.is_superuser:
+    if current_user == 'client':
         raise HTTPException(
             status_code=403,
             detail="The user doesn't have enough privileges",
@@ -219,7 +219,7 @@ def delete_user(
         raise HTTPException(status_code=404, detail="User not found")
     if user == current_user:
         raise HTTPException(
-            status_code=403, detail="Super users are not allowed to delete themselves"
+            status_code=403, detail="Admins are not allowed to delete themselves"
         )
     statement = delete(Item).where(col(Item.owner_id) == user_id)
     session.exec(statement)  # type: ignore

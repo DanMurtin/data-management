@@ -9,15 +9,15 @@ from app.models import User, Item, ItemCreate, ItemPublic, ItemsPublic, ItemUpda
 from sqlalchemy.exc import NoResultFound
 import sqlalchemy as sa
 
-router = APIRouter(prefix="/items", tags=["items"])
+router = APIRouter(prefix="/deliveries", tags=["deliveries"])
 
 
-@router.get("/", response_model=ItemsPublic)
+@router.get("/", response_model=DeliveriesPublic)
 def read_items(
     session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
 ) -> Any:
     """
-    Retrieve items.
+    Retrieve deliveries.
     """
     items_public = ItemsPublic(data=[], count=0)
     if current_user.role == 'admin':

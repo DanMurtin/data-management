@@ -2,14 +2,20 @@ import uuid
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
+from enum import Enum
+from datetime import date
 
+class RoleEnum(str, Enum):
+    admin = "admin"
+    client = "client"
+    specialist = "specialist"
 
 # Shared properties
 class UserBase(SQLModel):
     email: EmailStr = Field(unique=True, index=True, max_length=255)
     is_active: bool = True
-    is_superuser: bool = False
     full_name: str | None = Field(default=None, max_length=255)
+    role: RoleEnum = Field(default=RoleEnum.client, max_length=24)
 
 
 # Properties to receive via API on creation
@@ -64,7 +70,9 @@ class ItemBase(SQLModel):
 
 # Properties to receive on item creation
 class ItemCreate(ItemBase):
-    pass
+    owner_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE"
+    )
 
 
 # Properties to receive on item update
@@ -75,7 +83,6 @@ class ItemUpdate(ItemBase):
 # Database model, database table inferred from class name
 class Item(ItemBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    title: str = Field(max_length=255)
     owner_id: uuid.UUID = Field(
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
@@ -85,7 +92,7 @@ class Item(ItemBase, table=True):
 # Properties to return via API, id is always required
 class ItemPublic(ItemBase):
     id: uuid.UUID
-    owner_id: uuid.UUID
+    owner_name: str
 
 
 class ItemsPublic(SQLModel):
@@ -112,3 +119,32 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
+
+class File(SQLModel):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    location: str = Field(default=None)
+
+class Files(SQLModel):
+    data: list[File]
+    count: int
+
+class DeliveryBase(SQLModel):
+    files: Files
+
+class Delivery(DeliveryBase, table=True):
+    item_id: uuid.UUID = Field(
+        foreign_key="item.id", nullable=False, ondelete="CASCADE"
+    )
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    publish_date: date = Field(nullable=False)
+
+# Properties to return via API, id is always required
+class DeliveryPublic(DeliveryBase):
+    id: uuid.UUID
+    item_name: str
+    publish_date: date
+
+
+class DeliveriesPublic(SQLModel):
+    data: list[DeliveryPublic]
+    count: int
